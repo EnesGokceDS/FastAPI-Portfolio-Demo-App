@@ -1,0 +1,61 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RAG LLM Demo</title>
+</head>
+<body>
+    <h1>Welcome to the RAG LLM FastAPI Demo</h1>
+    <div id="login">
+        <h2>Login</h2>
+        <form id="login-form">
+            <label>Username: <input type="text" id="username" /></label><br/>
+            <label>Password: <input type="password" id="password" /></label><br/>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    <div id="query" style="display:none;">
+        <h2>Ask a Question</h2>
+        <form id="query-form">
+            <input type="text" id="query-input" placeholder="Your question" required/>
+            <button type="submit">Ask</button>
+        </form>
+        <div id="response"></div>
+    </div>
+    <script>
+        let token = "";
+        document.getElementById("login-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const response = await fetch("/auth/token", {
+                method: "POST",
+                headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+            });
+            const data = await response.json();
+            if (response.ok) {
+                token = data.access_token;
+                document.getElementById("login").style.display = "none";
+                document.getElementById("query").style.display = "block";
+            } else {
+                alert(data.detail);
+            }
+        });
+
+        document.getElementById("query-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const q = document.getElementById("query-input").value;
+            const response = await fetch(`/api/query?q=${encodeURIComponent(q)}`, {
+                headers: { "Authorization": "Bearer " + token }
+            });
+            const data = await response.json();
+            if (response.ok) {
+                document.getElementById("response").innerText = "Answer: " + data.answer;
+            } else {
+                document.getElementById("response").innerText = "Error: " + data.detail;
+            }
+        });
+    </script>
+</body>
+</html>
