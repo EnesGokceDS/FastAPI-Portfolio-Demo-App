@@ -4,3 +4,8 @@ pandas
 sentence-transformers
 faiss-cpu
 openai
+sqlalchemy
+bcrypt==4.0.1
+python-jose[cryptography]
+passlib
+python-multipart
