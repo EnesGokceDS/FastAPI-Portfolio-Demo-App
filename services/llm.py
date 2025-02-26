@@ -3,10 +3,12 @@ import openai
 import os
 import subprocess
 import sys
-
-# Ensure your OpenAI API key is set, e.g.,
-openai.api_key = os.getenv("OPENAI_API_KEY")
-# or set the OPENAI_API_KEY environment variable.
+from main import API_KEY
+# Try to get the API key from the environment
+if os.getenv("OPENAI_API_KEY"):
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+else:
+    openai.api_key = API_KEY  # No API key set
 
 def generate_answer(query: str, context: str) -> str:
     """

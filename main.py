@@ -7,6 +7,8 @@ from routers import auth  # our auth routes
 from services.database import SessionLocal, engine
 from services.models import User, Base
 from routers.auth import get_password_hash
+import openai, os
+from services.llm import router as llm
 
 app = FastAPI(title="RAG LLM FastAPI Demo")
 Base.metadata.create_all(bind=engine)
@@ -23,6 +25,14 @@ def read_root(request: Request):
 app.include_router(query_router, prefix="/api")
 app.include_router(auth.router, prefix="/auth")
 
+@app.post("/set_api_key")
+async def set_api_key(data: dict):
+    api_key = data.get("api_key")
+    if not api_key:
+        raise HTTPException(status_code=400, detail="API key is required.")
+    openai.api_key = api_key
+    return {"message": "API key set successfully."}
+
 # (Optional) Create a default admin on startup if not exists
 @app.on_event("startup")
 def create_admin():
@@ -33,6 +43,8 @@ def create_admin():
         db.add(admin)
         db.commit()
     db.close()
+
+API_KEY=openai.api_key
 
 if __name__ == "__main__":
     import uvicorn

@@ -1,86 +1,110 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>RAG LLM Demo</title>
-  <!-- Bootstrap CSS CDN -->
+  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
   <div class="container mt-5">
     <h1 class="text-center">RAG LLM FastAPI Demo</h1>
-    <div class="row mt-4">
-      <div class="col-md-6 offset-md-3">
-        <!-- Nav tabs for Login and Registration -->
-        <ul class="nav nav-tabs" id="authTab" role="tablist">
-          <li class="nav-item">
-            <a class="nav-link active" id="login-tab" data-bs-toggle="tab" href="#login" role="tab">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="register-tab" data-bs-toggle="tab" href="#register" role="tab">Register</a>
-          </li>
-        </ul>
-        <div class="tab-content mt-3">
-          <div class="tab-pane fade show active" id="login" role="tabpanel">
-            <form id="login-form">
-              <div class="mb-3">
-                <label for="login-username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="login-username" required>
-              </div>
-              <div class="mb-3">
-                <label for="login-password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="login-password" required>
-              </div>
-              <button type="submit" class="btn btn-primary">Login</button>
-            </form>
-          </div>
-          <div class="tab-pane fade" id="register" role="tabpanel">
-            <form id="register-form">
-              <div class="mb-3">
-                <label for="reg-username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="reg-username" required>
-              </div>
-              <div class="mb-3">
-                <label for="reg-password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="reg-password" required>
-              </div>
-              <button type="submit" class="btn btn-success">Register</button>
-            </form>
-          </div>
+
+    <!-- API Key Section -->
+    <div id="api-key-section" class="mt-3">
+      <h2>Enter Your OpenAI API Key</h2>
+      <form id="api-key-form">
+        <div class="mb-3">
+          <input type="text" class="form-control" id="api-key-input" placeholder="Enter your OpenAI API key" required>
         </div>
-        <div id="message" class="mt-3"></div>
-      </div>
+        <button type="submit" class="btn btn-primary">Set API Key</button>
+      </form>
     </div>
-    <div class="row mt-5" id="qa-section" style="display: none;">
-      <div class="col-md-8 offset-md-2">
-        <h2>Ask a Question</h2>
-        <form id="query-form">
-          <div class="mb-3">
-            <input type="text" class="form-control" id="query-input" placeholder="Your question" required>
-          </div>
-          <button type="submit" class="btn btn-primary">Ask</button>
-        </form>
-        <div class="mt-3" id="response"></div>
-        <div class="row mt-3">
-          <div class="col-md-8 offset-md-8">
-            <button id="clear-history" class="btn btn-warning">Clear Conversation</button>
-          </div>
-        </div>        
+
+    <!-- Authentication Section -->
+    <div id="auth-section" class="mt-5" style="display: none;">
+      <!-- Nav tabs for Login and Registration -->
+      <ul class="nav nav-tabs" id="authTab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="login-tab" data-bs-toggle="tab" href="#login" role="tab">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="register-tab" data-bs-toggle="tab" href="#register" role="tab">Register</a>
+        </li>
+      </ul>
+      <div class="tab-content mt-3">
+        <div class="tab-pane fade show active" id="login" role="tabpanel">
+          <form id="login-form">
+            <div class="mb-3">
+              <label for="login-username" class="form-label">Username</label>
+              <input type="text" class="form-control" id="login-username" required>
+            </div>
+            <div class="mb-3">
+              <label for="login-password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="login-password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+          </form>
+        </div>
+        <div class="tab-pane fade" id="register" role="tabpanel">
+          <form id="register-form">
+            <div class="mb-3">
+              <label for="reg-username" class="form-label">Username</label>
+              <input type="text" class="form-control" id="reg-username" required>
+            </div>
+            <div class="mb-3">
+              <label for="reg-password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="reg-password" required>
+            </div>
+            <button type="submit" class="btn btn-success">Register</button>
+          </form>
+        </div>
       </div>
+      <div id="message" class="mt-3"></div>
+    </div>
+
+    <!-- Q&A Section -->
+    <div id="qa-section" class="mt-5" style="display: none;">
+      <h2>Ask a Question</h2>
+      <form id="query-form">
+        <div class="mb-3">
+          <input type="text" class="form-control" id="query-input" placeholder="Your question" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Ask</button>
+      </form>
+      <div class="mt-3" id="response"></div>
+      <!-- Clear Conversation Button -->
+      <button id="clear-history" class="btn btn-warning mt-3">Clear Conversation</button>
     </div>
   </div>
-  
 
-  <!-- Bootstrap JS and dependencies -->
+  <!-- Bootstrap JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
   <script>
     let token = "";
-    // Initialize conversation history (if you're maintaining one)
     let conversationHistory = [];
-  
-    const messageDiv = document.getElementById("message");
-  
+
+    // API Key Form Handler
+    document.getElementById("api-key-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const apiKey = document.getElementById("api-key-input").value;
+      const response = await fetch("/set_api_key", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ api_key: apiKey })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        alert("API key set successfully!");
+        // Hide API key section and show the auth section
+        document.getElementById("api-key-section").style.display = "none";
+        document.getElementById("auth-section").style.display = "block";
+      } else {
+        alert("Error: " + data.detail);
+      }
+    });
+
     // Handle Login
     document.getElementById("login-form").addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -94,13 +118,15 @@
       const data = await response.json();
       if (response.ok) {
         token = data.access_token;
-        messageDiv.innerHTML = `<div class="alert alert-success">Logged in successfully!</div>`;
+        document.getElementById("message").innerHTML = '<div class="alert alert-success">Logged in successfully!</div>';
+        // Hide the auth section and display the Q&A section
+        document.getElementById("auth-section").style.display = "none";
         document.getElementById("qa-section").style.display = "block";
       } else {
-        messageDiv.innerHTML = `<div class="alert alert-danger">Login failed: ${data.detail}</div>`;
+        document.getElementById("message").innerHTML = `<div class="alert alert-danger">Login failed: ${data.detail}</div>`;
       }
     });
-  
+
     // Handle Registration
     document.getElementById("register-form").addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -113,42 +139,39 @@
       });
       const data = await response.json();
       if (response.ok) {
-        messageDiv.innerHTML = `<div class="alert alert-success">Registration successful! You can now log in.</div>`;
-        // Switch to login tab
+        document.getElementById("message").innerHTML = '<div class="alert alert-success">Registration successful! You can now log in.</div>';
+        // Switch to the login tab after registration
         const loginTab = new bootstrap.Tab(document.querySelector('#login-tab'));
         loginTab.show();
       } else {
-        messageDiv.innerHTML = `<div class="alert alert-danger">Registration failed: ${data.detail}</div>`;
+        document.getElementById("message").innerHTML = `<div class="alert alert-danger">Registration failed: ${data.detail}</div>`;
       }
     });
-  
+
     // Handle Question Submission
     document.getElementById("query-form").addEventListener("submit", async (e) => {
       e.preventDefault();
       const q = document.getElementById("query-input").value;
-  
-      // If you want to keep a conversation history, push the user's question:
+      // Append the user's question to conversation history
       conversationHistory.push({ role: "user", content: q });
-  
       const response = await fetch(`/api/query?q=${encodeURIComponent(q)}`, {
         headers: { "Authorization": "Bearer " + token }
       });
       const data = await response.json();
       if (response.ok) {
-        // Append the assistant's response to the conversation history:
+        // Append the assistant's answer to conversation history
         conversationHistory.push({ role: "assistant", content: data.answer });
         document.getElementById("response").innerHTML = `<div class="alert alert-info">Answer: ${data.answer}</div>`;
       } else {
         document.getElementById("response").innerHTML = `<div class="alert alert-danger">Error: ${data.detail}</div>`;
       }
     });
-  
+
     // Handle Clear Conversation
     document.getElementById("clear-history").addEventListener("click", () => {
-      conversationHistory = []; // Reset the history variable
-      document.getElementById("response").innerHTML = ""; // Optionally clear the displayed chat history in the UI
-      // Optionally clear any other UI elements that display conversation
+      conversationHistory = []; // Reset the conversation history variable
+      document.getElementById("response").innerHTML = ""; // Optionally clear the displayed conversation
     });
-  </script>  
+  </script>
 </body>
 </html>
