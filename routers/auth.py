@@ -97,3 +97,17 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db), current_u
     db.commit()
     db.refresh(new_user)
     return new_user
+
+@router.post("/register", response_model=UserResponse)
+async def register_user(user: UserCreate, db: Session = Depends(get_db)):
+    """
+    Public registration endpoint.
+    """
+    if get_user(db, user.username):
+        raise HTTPException(status_code=400, detail="Username already registered")
+    hashed_password = get_password_hash(user.password)
+    new_user = User(username=user.username, hashed_password=hashed_password, is_admin=False)
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user

@@ -1,8 +1,11 @@
 # services/llm.py
 import openai
+import os
+import subprocess
+import sys
 
 # Ensure your OpenAI API key is set, e.g.,
-openai.api_key = 'your-openai-key'
+openai.api_key = os.getenv("OPENAI_API_KEY")
 # or set the OPENAI_API_KEY environment variable.
 
 def generate_answer(query: str, context: str) -> str:
@@ -27,6 +30,5 @@ def generate_answer(query: str, context: str) -> str:
         temperature=0.7,
         top_p=1.0
     )
-    
     
     return response.choices[0].message.content
