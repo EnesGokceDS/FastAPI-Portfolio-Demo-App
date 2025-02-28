@@ -109,4 +109,3 @@ Project Link: [https://github.com/EnesGokceDS/FastAPI-Portfolio-Demo-App](https:
 - [Sentence Transformers](https://www.sbert.net/)
 - [OpenAI](https://openai.com/)
 - [SQLAlchemy](https://www.sqlalchemy.org/)
-```
