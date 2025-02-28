@@ -7,8 +7,7 @@ from routers import auth  # our auth routes
 from services.database import SessionLocal, engine
 from services.models import User, Base
 from routers.auth import get_password_hash
-import openai, os
-from services.llm import router as llm
+import openai
 
 app = FastAPI(title="RAG LLM FastAPI Demo")
 Base.metadata.create_all(bind=engine)

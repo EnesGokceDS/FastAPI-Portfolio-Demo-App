@@ -1,9 +1,6 @@
 # services/llm.py
 import openai
 import os
-import subprocess
-import sys
-from main import API_KEY
 # Try to get the API key from the environment
 if os.getenv("OPENAI_API_KEY"):
     openai.api_key = os.getenv("OPENAI_API_KEY")
