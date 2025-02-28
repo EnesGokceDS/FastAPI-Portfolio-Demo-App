@@ -1,11 +1,29 @@
 # services/llm.py
 import openai
 import os
-# Try to get the API key from the environment
-if os.getenv("OPENAI_API_KEY"):
+
+# Try to load environment variables from a .env file for local development
+try:
+    from dotenv import load_dotenv
+    load_dotenv()  # Loads variables from .env into the environment
+except ImportError:
+    pass
+
+# Optionally, try to import streamlit and use its secrets if available
+try:
+    import streamlit as st
+except ImportError:
+    st = None
+
+# Determine the API key from multiple possible sources
+if st is not None and "openai" in st.secrets and "api_key" in st.secrets["openai"]:
+    # Use API key from Streamlit secrets when available (e.g., on Streamlit Cloud)
+    openai.api_key = st.secrets["openai"]["api_key"]
+elif os.getenv("OPENAI_API_KEY"):
+    # Use the API key from an environment variable or .env file
     openai.api_key = os.getenv("OPENAI_API_KEY")
 else:
-    openai.api_key = API_KEY  # No API key set
+    raise ValueError("No API key set. Please provide one via Streamlit secrets, environment variables, or a .env file.")
 
 def generate_answer(query: str, context: str) -> str:
     """
@@ -19,10 +37,7 @@ def generate_answer(query: str, context: str) -> str:
     
     response = openai.chat.completions.create(
         messages=[
-            {
-                'role': 'user',
-                'content': prompt
-            }
+            {'role': 'user', 'content': prompt}
         ],
         model="gpt-4o",
         max_tokens=150,
