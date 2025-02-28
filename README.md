@@ -1,2 +1,2 @@
-# FastAPI-Portfolio-Demo-App
-demo fastapi app with rag and llm
+# FastAPI-Demo-App
+demo fastapi app with RAG and LLM
